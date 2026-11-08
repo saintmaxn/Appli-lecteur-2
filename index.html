@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="Votre lecteur IPTV personnel et des recommandations adaptées à vos habitudes.">
+  <title>Lumière — votre télé, à votre façon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#home" aria-label="Lumière accueil"><span class="brand-mark">l</span><span>lumière<span class="brand-dot">.</span></span></a>
+    <div class="side-label">MENU</div>
+    <nav class="main-nav" aria-label="Navigation principale">
+      <button class="nav-link active" data-view="home"><span class="nav-icon">⌂</span>Accueil</button>
+      <button class="nav-link" data-view="channels"><span class="nav-icon">▤</span>Chaînes <span class="nav-count" id="channel-count">0</span></button>
+      <button class="nav-link" data-view="favorites"><span class="nav-icon">♡</span>Mes favoris</button>
+      <button class="nav-link" data-view="history"><span class="nav-icon">◷</span>Récemment regardé</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="profile-card"><div class="avatar">L</div><div><strong>Mon espace</strong><span>Tout reste privé</span></div><span class="online-dot"></span></div>
+      <button class="text-button" id="reset-data">Réinitialiser les données</button>
+    </div>
+  </aside>
+
+  <main class="main-content" id="home">
+    <header class="topbar">
+      <div class="mobile-brand"><span class="brand-mark">l</span> lumière<span class="brand-dot">.</span></div>
+      <div class="breadcrumbs"><span>Votre espace</span><span class="crumb-sep">/</span><strong id="page-title">Accueil</strong></div>
+      <div class="top-actions">
+        <button class="icon-button" id="search-toggle" aria-label="Rechercher">⌕</button>
+        <label class="import-button" for="playlist-file"><span>＋</span> Importer une playlist</label>
+        <input id="playlist-file" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl" hidden>
+      </div>
+    </header>
+
+    <section class="search-row" id="search-row" hidden><span>⌕</span><input id="search-input" type="search" placeholder="Rechercher une chaîne ou une catégorie…" autocomplete="off"><button id="search-close" aria-label="Fermer">×</button></section>
+
+    <section class="welcome-row">
+      <div><p class="eyebrow" id="today-label">VOTRE PROGRAMME, VOTRE RYTHME</p><h1 id="welcome-title">Bonsoir<span class="sun"> ✳</span></h1><p class="welcome-subtitle">Installez-vous. On s’occupe de trouver la suite.</p></div>
+      <button class="outline-button" id="add-playlist-open"><span>＋</span> Ajouter une playlist</button>
+    </section>
+
+    <section class="player-section">
+      <div class="player-wrap" id="player-wrap">
+        <video id="video" controls playsinline></video>
+        <div class="player-empty" id="player-empty"><div class="play-orb">▶</div><p>Votre prochain moment commence ici</p><span>Importez une playlist puis choisissez une chaîne.</span></div>
+        <div class="player-overlay"><span class="live-pill"><i></i> EN DIRECT</span><button class="player-expand" id="player-expand" title="Plein écran" aria-label="Plein écran">⛶</button></div>
+      </div>
+      <div class="now-playing"><div class="now-info"><div class="channel-logo player-logo" id="current-logo">L</div><div><div class="now-kicker">EN COURS DE LECTURE</div><h2 id="current-title">Aucune chaîne sélectionnée</h2><p id="current-group">Importez votre playlist pour commencer</p></div></div><button class="favorite-current" id="favorite-current" aria-label="Ajouter aux favoris" hidden>♡</button></div>
+    </section>
+
+    <section class="content-section" id="recommendations-section">
+      <div class="section-heading"><div><p class="eyebrow">FAIT POUR VOUS</p><h2>À découvrir <span class="sparkle">✳</span></h2></div><button class="see-all" data-view="channels">Toutes les chaînes <span>→</span></button></div>
+      <div id="recommendations" class="channel-grid"></div>
+    </section>
+
+    <section class="content-section" id="recent-section">
+      <div class="section-heading"><div><p class="eyebrow">REPRENEZ OÙ VOUS EN ÉTIEZ</p><h2>Repris récemment</h2></div><button class="see-all" data-view="history">Voir l’historique <span>→</span></button></div>
+      <div id="recent-channels" class="channel-grid"></div>
+    </section>
+
+    <section class="content-section library-section" id="library-view" hidden>
+      <div class="section-heading"><div><p class="eyebrow" id="library-eyebrow">VOTRE SÉLECTION</p><h2 id="library-title">Toutes les chaînes</h2></div><span class="library-total" id="library-total">0 chaîne</span></div>
+      <div class="filter-row" id="filter-row"></div>
+      <div id="library-channels" class="channel-grid"></div>
+    </section>
+
+    <footer><span>Conçu pour vos soirées.</span><span>Vos habitudes restent sur cet appareil.</span></footer>
+  </main>
+
+  <dialog id="playlist-dialog" class="playlist-dialog">
+    <form method="dialog" class="dialog-close-form"><button class="dialog-close" aria-label="Fermer">×</button></form>
+    <div class="dialog-icon">↗</div><p class="eyebrow">VOTRE CONTENU</p><h2>Ajoutez une playlist</h2><p class="dialog-copy">Collez le lien de votre playlist M3U. Votre lien est conservé uniquement dans ce navigateur.</p>
+    <form id="playlist-url-form"><label for="playlist-url">URL de la playlist</label><div class="url-input-wrap"><span>↗</span><input id="playlist-url" type="url" placeholder="https://exemple.com/playlist.m3u" required></div><p class="form-error" id="form-error" role="alert"></p><button class="primary-button" type="submit" id="playlist-submit">Charger la playlist <span>→</span></button></form>
+    <div class="dialog-divider"><span>ou</span></div><label class="upload-drop" for="playlist-file-dialog"><span class="upload-icon">⇧</span><strong>Choisir un fichier M3U</strong><small>Votre fichier ne quitte pas votre appareil</small></label><input id="playlist-file-dialog" type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl" hidden>
+    <p class="privacy-note">✦ Vos données de visionnage ne sont jamais envoyées.</p>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
